@@ -1,6 +1,8 @@
 import csv
 import gzip
 import os
+from datetime import date
+
 import pyarrow as pa
 import pyarrow.parquet as pq
 
@@ -8,7 +10,10 @@ INPUT = "data/processed/orders_clean_1m.csv.gz"
 OUTPUT = "data/processed/orders_parquet"
 
 NUMERIC_INT = {"id", "age", "quantity", "delivery_days", "customer_rating"}
-NUMERIC_FLOAT = {"unit_price", "discount", "total_amount", "shipping_cost", "latitude", "longitude"}
+NUMERIC_FLOAT = {
+    "unit_price", "discount", "total_amount",
+    "shipping_cost", "latitude", "longitude"
+}
 BOOL = {"is_member"}
 DATE_FIELDS = {"order_date", "ship_date", "created_at"}
 
@@ -29,6 +34,8 @@ for country, rows in sorted(partition_rows.items()):
             row[name] = float(row[name])
         for name in BOOL:
             row[name] = row[name].lower() == "true"
+        for name in DATE_FIELDS:
+            row[name] = date.fromisoformat(row[name])
 
     arrays = {}
     for name in columns:

@@ -1,9 +1,1 @@
-data/__pycache__/
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-
-# Keep the generated dataset/output in this exercise repo.
-!data/
-!data/raw/
-!data/processed/
+data/__pycache__/\n__pycache__/\n*.pyc\n.ipynb_checkpoints/\n\n# Keep generated dataset/output in this exercise repo.\n!data/\n!data/raw/\n!data/processed/\n!data/processed/orders_parquet/\n

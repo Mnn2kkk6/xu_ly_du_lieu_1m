@@ -1,12 +1,12 @@
 # PySpark 1M Records / 30 Fields
 
-Bài thực hành xử lý dữ liệu giả lập khoảng **1 triệu bản ghi**, mỗi bản ghi có **30 fields**, tập trung vào data quality và các thao tác xử lý dữ liệu bằng PySpark.
+Bài thực hành xử lý dữ liệu giả lập khoảng 1 triệu bản ghi, mỗi bản ghi có 30 fields, tập trung vào data quality và các thao tác xử lý dữ liệu bằng PySpark.
 
 ## Nội dung
 
 - Sinh 1,000,000 records bằng Spark
 - Kiểm tra schema và đúng 30 fields
-- Tạo dữ liệu lỗi: NULL, duplicate và invalid values
+- Cố tình tạo dữ liệu lỗi: NULL, duplicate và invalid values
 - Đọc raw CSV với explicit schema
 - Cast dữ liệu sang business types
 - Lọc dữ liệu lỗi và loại duplicate
@@ -17,34 +17,44 @@ Bài thực hành xử lý dữ liệu giả lập khoảng **1 triệu bản gh
 
 ## Data / Output
 
-Repo có kèm dữ liệu nén để có thể clone về và kiểm tra trực tiếp:
+Repo có kèm data và output để clone về kiểm tra:
 
-~~~text
+```text
 data/
 ├── raw/
 │   └── orders_raw_1m.csv.gz
 └── processed/
     ├── orders_clean_1m.csv.gz
-    └── orders_summary.csv
-~~~
+    ├── orders_summary.csv
+    └── orders_parquet/
+        ├── country=MY/
+        │   └── part-00000.parquet
+        ├── country=SG/
+        │   └── part-00000.parquet
+        ├── country=TH/
+        │   └── part-00000.parquet
+        └── country=VN/
+            └── part-00000.parquet
+```
 
-Raw gồm **1,010,000 rows** (1,000,000 records + 10,000 duplicate rows).
+Raw gồm 1,010,000 rows (1,000,000 records + 10,000 duplicate rows).
 
-Processed gồm dữ liệu sau khi validate/cast logic và loại duplicate theo id.
+Processed gồm khoảng 984,100 rows sau validation và loại duplicate theo id.
 
-File \`orders_summary.csv\` là kết quả tổng hợp theo \`country\` và \`product_category\`.
+Parquet được nén bằng Snappy và partition theo country.
 
 ## Chạy PySpark
 
-~~~bash
+```bash
 spark-submit bigdata_1m_pyspark.py
-~~~
+```
 
-Script PySpark sẽ tạo output Parquet tại:
+Script PySpark sẽ tạo raw CSV và output Parquet tại:
 
-~~~text
+data/raw/orders_csv/
 data/processed/orders_parquet/
 data/processed/orders_summary/
-~~~
 
-GitHub Actions của repo cũng tự sinh và commit bộ raw/processed CSV nén khi có commit mới vào \`main\` (trừ commit sinh dữ liệu).
+## GitHub Actions
+
+Workflow .github/workflows/generate-data.yml tự sinh raw/processed data và partitioned Parquet rồi commit vào main.

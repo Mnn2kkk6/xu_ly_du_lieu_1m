@@ -1,4 +1,9 @@
-data/
+data/__pycache__/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+
+# Keep the generated dataset/output in this exercise repo.
+!data/
+!data/raw/
+!data/processed/

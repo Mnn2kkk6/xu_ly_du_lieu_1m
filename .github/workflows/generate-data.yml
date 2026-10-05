@@ -3,6 +3,8 @@ name: Generate 1M Dataset
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "data/**"
 
 permissions:
   contents: write
@@ -33,7 +35,7 @@ jobs:
 
       - name: Show generated files
         run: |
-          find data -type f -printf '%p %k KB\\n'
+          find data -type f -printf '%p %k KB\n'
           echo "RAW ROWS:"
           gzip -cd data/raw/orders_raw_1m.csv.gz | wc -l
           echo "CLEAN ROWS:"
@@ -43,7 +45,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f data/raw/orders_raw_1m.csv.gz data/processed/orders_clean_1m.csv.gz data/processed/orders_summary.csv data/processed/orders_parquet/
+          git add -f data/raw/orders_raw_1m.csv.gz             data/processed/orders_clean_1m.csv.gz             data/processed/orders_summary.csv             data/processed/orders_parquet/
           git commit -m "Generate 1M dataset and outputs" || exit 0
           git pull --rebase origin main
           git push

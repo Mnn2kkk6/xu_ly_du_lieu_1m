@@ -1,0 +1,40 @@
+name: Generate 1M Dataset
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  generate-data:
+    if: github.event.head_commit.message != 'Generate 1M dataset and outputs'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate raw and processed data
+        run: python generate_repository_data.py
+
+      - name: Show generated files
+        run: |
+          find data -type f -printf '%p %k KB\n'
+          gzip -cd data/raw/orders_raw_1m.csv.gz | wc -l
+          gzip -cd data/processed/orders_clean_1m.csv.gz | wc -l
+
+      - name: Commit generated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f data/raw/orders_raw_1m.csv.gz data/processed/orders_clean_1m.csv.gz data/processed/orders_summary.csv
+          git commit -m "Generate 1M dataset and outputs" || exit 0
+          git push

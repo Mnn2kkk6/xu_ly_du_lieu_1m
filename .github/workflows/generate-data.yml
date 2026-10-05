@@ -11,7 +11,7 @@ jobs:
   generate-data:
     if: github.event.head_commit.message != 'Generate 1M dataset and outputs'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: Checkout
@@ -22,19 +22,28 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Generate raw and processed data
+      - name: Generate raw and processed CSV data
         run: python generate_repository_data.py
+
+      - name: Install Parquet dependency
+        run: python -m pip install --upgrade pip pyarrow
+
+      - name: Generate partitioned Parquet output
+        run: python generate_parquet_output.py
 
       - name: Show generated files
         run: |
-          find data -type f -printf '%p %k KB\n'
+          find data -type f -printf '%p %k KB\\n'
+          echo "RAW ROWS:"
           gzip -cd data/raw/orders_raw_1m.csv.gz | wc -l
+          echo "CLEAN ROWS:"
           gzip -cd data/processed/orders_clean_1m.csv.gz | wc -l
 
       - name: Commit generated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f data/raw/orders_raw_1m.csv.gz data/processed/orders_clean_1m.csv.gz data/processed/orders_summary.csv
+          git add -f data/raw/orders_raw_1m.csv.gz data/processed/orders_clean_1m.csv.gz data/processed/orders_summary.csv data/processed/orders_parquet/
           git commit -m "Generate 1M dataset and outputs" || exit 0
+          git pull --rebase origin main
           git push

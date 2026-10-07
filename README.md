@@ -25,20 +25,33 @@ Dữ liệu được cố tình chèn NULL và invalid values vào các trườn
 - So sánh thời gian xử lý giữa 1M / 10M / 100M
 - Theo dõi tác động của shuffle partitions, disk I/O và data volume
 
-## Cấu trúc hiện tại
+## Cấu trúc dữ liệu
 
 ~~~text
 data/
 ├── raw/
 │   └── orders_raw_1m.csv.gz
-└── processed/
-    ├── orders_clean_1m.csv.gz
-    ├── orders_summary.csv
-    └── orders_parquet/
-        ├── country=MY/
-        ├── country=SG/
-        ├── country=TH/
-        └── country=VN/
+├── processed/
+│   ├── orders_clean_1m.csv.gz
+│   ├── orders_summary.csv
+│   └── orders_parquet/
+└──
+├── 10m/
+│   ├── README.md
+│   ├── raw/
+│   │   └── orders_raw_10m.csv.gz
+│   └── processed/
+│       ├── orders_clean_10m.csv.gz
+│       ├── orders_summary_10m.csv
+│       └── orders_parquet/
+└── 100m/
+    ├── README.md
+    ├── raw/
+    │   └── orders_raw_100m.csv.gz
+    └── processed/
+        ├── orders_clean_100m.csv.gz
+        ├── orders_summary_100m.csv
+        └── orders_parquet/
 ~~~
 
 Bộ 1M hiện tại được giữ lại làm dataset mẫu để clone về kiểm tra.
@@ -57,7 +70,7 @@ python generate_repository_data.py --rows 100m
 Có thể chỉ định thư mục output:
 
 ~~~bash
-python generate_repository_data.py --rows 10m --output-dir data/scale_csv
+python generate_repository_data.py --rows 10m
 ~~~
 
 Output sẽ có dạng:

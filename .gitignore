@@ -1,1 +1,13 @@
-data/__pycache__/\n__pycache__/\n*.pyc\n.ipynb_checkpoints/\n\n# Keep generated dataset/output in this exercise repo.\n!data/\n!data/raw/\n!data/processed/\n!data/processed/orders_parquet/\n
+data/__pycache__/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Keep the committed 1M dataset/output for this exercise.
+!data/
+!data/raw/
+!data/processed/
+!data/processed/orders_parquet/
+
+# 10M/100M scale runs are generated locally and are intentionally not committed.
+data/scale/

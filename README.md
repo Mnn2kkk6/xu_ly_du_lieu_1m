@@ -43,7 +43,7 @@ data/
 
 Bộ 1M hiện tại được giữ lại làm dataset mẫu để clone về kiểm tra.
 
-Các run 10M và 100M không được commit vào Git vì kích thước file tăng rất nhanh. Repo chỉ lưu code để tái tạo dữ liệu và benchmark; thư mục data/scale/ được gitignore.
+Các run 10M và 100M không được commit vào Git vì kích thước file tăng rất nhanh. Repo chỉ lưu code để tái tạo dữ liệu và benchmark; thư mục output/ được gitignore.
 
 ## 1. Sinh CSV.gz theo quy mô
 
@@ -126,7 +126,7 @@ Có workflow thủ công:
 
 .github/workflows/scale-benchmark.yml
 
-Vào Actions → Scale Benchmark (10M / 100M) → Run workflow rồi chọn 10m hoặc 100m.
+Vào Actions → Scale Benchmark (1M / 10M / 100M) → Run workflow rồi chọn 10m hoặc 100m.
 
 Workflow chỉ lưu benchmark_metrics.json dưới dạng artifact, không commit dataset lớn vào repository.
 

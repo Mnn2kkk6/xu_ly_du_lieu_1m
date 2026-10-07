@@ -1,0 +1,10 @@
+{
+  "scale": "1m",
+  "base_rows": 1000000,
+  "raw_rows": 1010000,
+  "distinct_ids": 1000000,
+  "clean_rows": 984100,
+  "filtered_or_invalid_rows": 15900,
+  "summary_groups": 24,
+  "note": "Counts reproduced from the committed 1M dataset/output."
+}

@@ -1,4 +1,4 @@
-name: Scale Benchmark (10M / 100M)
+name: Scale Benchmark (1M / 10M / 100M)
 
 on:
   workflow_dispatch:
@@ -6,9 +6,10 @@ on:
       rows:
         description: "Dataset size"
         required: true
-        default: "10m"
+        default: "1m"
         type: choice
         options:
+          - 1m
           - 10m
           - 100m
 
@@ -36,7 +37,7 @@ jobs:
         run: |
           spark-submit bigdata_scale_pyspark.py \
             --rows "${{ inputs.rows }}" \
-            --output-dir data/scale
+            --output-dir output
 
       - name: Show benchmark metrics
         run: cat data/scale/${{ inputs.rows }}/benchmark_metrics.json

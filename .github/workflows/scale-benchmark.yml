@@ -14,7 +14,7 @@ on:
           - 100m
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   benchmark:
@@ -39,12 +39,23 @@ jobs:
             --rows "${{ inputs.rows }}" \
             --output-dir output
 
-      - name: Show benchmark metrics
-        run: cat data/scale/${{ inputs.rows }}/benchmark_metrics.json
+      - name: Show generated output
+        run: |
+          find output/${{ inputs.rows }} -maxdepth 3 -type f -printf "%p %k KB\n"
+          cat output/${{ inputs.rows }}/benchmark_metrics.json
 
-      - name: Upload benchmark metrics
+      - name: Upload scale output
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-${{ inputs.rows }}
           path: data/scale/${{ inputs.rows }}/benchmark_metrics.json
           if-no-files-found: error
+
+      - name: Commit benchmark metrics
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output/${{ inputs.rows }}/benchmark_metrics.json output/${{ inputs.rows }}/summary.csv
+          git commit -m "Add ${{ inputs.rows }} benchmark output" || exit 0
+          git pull --rebase origin main
+          git push

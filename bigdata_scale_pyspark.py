@@ -1,4 +1,5 @@
 import argparse
+import csv
 import json
 import os
 import time
@@ -347,10 +348,12 @@ def main():
         )
         .orderBy(col("revenue").desc())
     )
-    summary_count = summary.count()
+    summary_rows = summary.collect()
+    summary_count = len(summary_rows)
     timings["groupby_seconds"] = round(time.perf_counter() - t0, 2)
 
-    output_path = os.path.join(args.output_dir, name, "orders_parquet")
+    output_dir = os.path.join(args.output_dir, name)
+    output_path = os.path.join(output_dir, "orders_parquet")
     t0 = time.perf_counter()
     (
         clean_df
@@ -375,8 +378,26 @@ def main():
         "timings_seconds": timings,
     }
 
-    metrics_dir = os.path.join(args.output_dir, name)
+    metrics_dir = output_dir
     os.makedirs(metrics_dir, exist_ok=True)
+
+    summary_path = os.path.join(output_dir, "summary.csv")
+    with open(summary_path, "w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "country", "product_category", "orders",
+            "total_quantity", "revenue", "avg_delivery_days"
+        ])
+        for row in summary_rows:
+            writer.writerow([
+                row["country"],
+                row["product_category"],
+                row["orders"],
+                row["total_quantity"],
+                f"{row['revenue']:.2f}",
+                f"{row['avg_delivery_days']:.4f}",
+            ])
+
     metrics_path = os.path.join(metrics_dir, "benchmark_metrics.json")
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)

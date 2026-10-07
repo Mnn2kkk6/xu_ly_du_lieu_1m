@@ -106,15 +106,18 @@ spark-submit bigdata_scale_pyspark.py --rows 100m
 Output mặc định:
 
 ~~~text
-data/scale/
+output/
 ├── 1m/
 │   ├── benchmark_metrics.json
+│   ├── summary.csv
 │   └── orders_parquet/
 ├── 10m/
 │   ├── benchmark_metrics.json
+│   ├── summary.csv
 │   └── orders_parquet/
 └── 100m/
     ├── benchmark_metrics.json
+    ├── summary.csv
     └── orders_parquet/
 ~~~
 
@@ -126,7 +129,7 @@ Có workflow thủ công:
 
 .github/workflows/scale-benchmark.yml
 
-Vào Actions → Scale Benchmark (1M / 10M / 100M) → Run workflow rồi chọn 10m hoặc 100m.
+Vào Actions → Scale Benchmark (1M / 10M / 100M) → Run workflow rồi chọn 1m, 10m hoặc 100m.
 
 Workflow chỉ lưu benchmark_metrics.json dưới dạng artifact, không commit dataset lớn vào repository.
 

@@ -153,7 +153,7 @@ def main():
         help="Number of base rows, e.g. 1m, 10m, 100m"
     )
     parser.add_argument(
-        "--output-dir", default="data",
+        "--output-dir", default=None,
         help="Root directory for generated raw/processed data"
     )
     parser.add_argument(
@@ -169,9 +169,15 @@ def main():
     dup_rows = int(n * args.duplicate_rate)
     name = scale_name(n)
 
-    raw_path = os.path.join(args.output_dir, "raw", f"orders_raw_{name}.csv.gz")
+    # Keep the existing 1M layout, while placing larger datasets under
+    # data/10m and data/100m by default.
+    output_dir = args.output_dir or (
+        "data" if n == 1_000_000 else os.path.join("data", name)
+    )
+
+    raw_path = os.path.join(output_dir, "raw", f"orders_raw_{name}.csv.gz")
     clean_path = os.path.join(
-        args.output_dir, "processed", f"orders_clean_{name}.csv.gz"
+        output_dir, "processed", f"orders_clean_{name}.csv.gz"
     )
     summary_filename = (
         "orders_summary.csv"
@@ -179,7 +185,7 @@ def main():
         else f"orders_summary_{name}.csv"
     )
     summary_path = os.path.join(
-        args.output_dir, "processed", summary_filename
+        output_dir, "processed", summary_filename
     )
 
     os.makedirs(os.path.dirname(raw_path), exist_ok=True)

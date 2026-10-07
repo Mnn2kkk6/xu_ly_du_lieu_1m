@@ -253,7 +253,6 @@ def main():
 
     t0 = time.perf_counter()
     raw_df, columns = build_dataset(spark, args.rows)
-    raw_df = raw_df.persist()
     raw_count = raw_df.count()
     timings["generate_and_materialize_seconds"] = round(
         time.perf_counter() - t0, 2
@@ -387,7 +386,6 @@ def main():
         print(f"{key}: {value}")
     print(f"metrics_path: {metrics_path}")
 
-    raw_df.unpersist()
     spark.stop()
 
 

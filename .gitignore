@@ -11,3 +11,9 @@ __pycache__/
 
 # Large benchmark outputs are generated locally / as GitHub Actions artifacts.
 output/*/orders_parquet/
+
+# Large 10M/100M datasets are generated locally and are not committed.
+data/10m/*
+!data/10m/README.md
+data/100m/*
+!data/100m/README.md

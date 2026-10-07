@@ -180,7 +180,6 @@ def main():
     os.makedirs(os.path.dirname(raw_path), exist_ok=True)
     os.makedirs(os.path.dirname(clean_path), exist_ok=True)
 
-    clean_seen = set()
     aggregates = {}
     clean_count = 0
 
@@ -213,7 +212,6 @@ def main():
             if not is_valid(row):
                 continue
 
-            row_id = row[0]
             writer.writerow(row)
             clean_count += 1
 

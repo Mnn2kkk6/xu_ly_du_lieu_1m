@@ -1,0 +1,49 @@
+name: Scale Benchmark (10M / 100M)
+
+on:
+  workflow_dispatch:
+    inputs:
+      rows:
+        description: "Dataset size"
+        required: true
+        default: "10m"
+        type: choice
+        options:
+          - 10m
+          - 100m
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PySpark
+        run: python -m pip install --upgrade pip pyspark==3.5.9
+
+      - name: Run scale benchmark
+        run: |
+          python bigdata_scale_pyspark.py \
+            --rows "\${{ inputs.rows }}" \
+            --output-dir data/scale
+
+      - name: Show benchmark metrics
+        run: cat data/scale/\${{ inputs.rows }}/benchmark_metrics.json
+
+      - name: Upload benchmark metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-\${{ inputs.rows }}
+          path: data/scale/\${{ inputs.rows }}/benchmark_metrics.json
+          if-no-files-found: error

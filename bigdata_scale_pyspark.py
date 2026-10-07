@@ -230,7 +230,7 @@ def main():
         description="Scale data-quality exercise with PySpark."
     )
     parser.add_argument("--rows", type=parse_rows, default=1_000_000)
-    parser.add_argument("--output-dir", default="data/scale")
+    parser.add_argument("--output-dir", default="output")
     parser.add_argument("--shuffle-partitions", type=int, default=None)
     args = parser.parse_args()
 

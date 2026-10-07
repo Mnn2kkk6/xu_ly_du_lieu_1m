@@ -282,7 +282,7 @@ def main():
         | (
             col("unit_price").isNotNull()
             & (
-                ~col("unit_price").rlike(r"^[0-9]+(\\.[0-9]+)?$")
+                ~col("unit_price").rlike(r"^[0-9]+(\.[0-9]+)?$")
                 | (col("unit_price").cast("double") < 0)
             )
         )
@@ -382,7 +382,7 @@ def main():
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
 
-    print("\\n===== SCALE RESULT =====")
+    print("\n===== SCALE RESULT =====")
     for key, value in metrics.items():
         print(f"{key}: {value}")
     print(f"metrics_path: {metrics_path}")

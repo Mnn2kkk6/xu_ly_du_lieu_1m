@@ -35,7 +35,6 @@ data/
 │   ├── orders_clean_1m.csv.gz
 │   ├── orders_summary.csv
 │   └── orders_parquet/
-└──
 ├── 10m/
 │   ├── README.md
 │   ├── raw/
@@ -71,19 +70,22 @@ Có thể chỉ định thư mục output:
 
 ~~~bash
 python generate_repository_data.py --rows 10m
+python generate_repository_data.py --rows 100m
 ~~~
 
 Output sẽ có dạng:
 
 ~~~text
-data/scale_csv/
-├── raw/orders_raw_10m.csv.gz
+data/10m/
+├── README.md
+├── raw/
+│   └── orders_raw_10m.csv.gz
 └── processed/
     ├── orders_clean_10m.csv.gz
     └── orders_summary_10m.csv
 ~~~
 
-Với 100M, CSV.gz có thể chiếm nhiều GB nên phải chạy trên ổ đĩa còn trống đủ lớn.
+Với 100M, CSV.gz có thể chiếm nhiều GB nên phải chạy trên ổ đĩa còn trống đủ lớn. Dataset lớn không được commit trực tiếp vào Git; GitHub Actions có thể tạo và upload dưới dạng artifact.
 
 ## 2. Chuyển CSV.gz sang Parquet theo chunk
 
@@ -91,8 +93,8 @@ Không nên đọc toàn bộ CSV vào RAM khi lên 10M/100M. Script generate_pa
 
 ~~~bash
 python generate_parquet_output.py \
-  --input data/scale_csv/processed/orders_clean_10m.csv.gz \
-  --output data/scale_parquet/10m/orders_parquet
+  --input data/10m/processed/orders_clean_10m.csv.gz \
+  --output data/10m/processed/orders_parquet
 ~~~
 
 Có thể chỉnh buffer:

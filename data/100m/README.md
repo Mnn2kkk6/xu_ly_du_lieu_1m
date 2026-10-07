@@ -21,7 +21,7 @@ data/100m/
 Tạo dataset:
 
 ```bash
-python generate_repository_data.py --rows 100m --output-dir data/100m
+python generate_repository_data.py --rows 100m
 ```
 
 Tạo Parquet theo chunk:

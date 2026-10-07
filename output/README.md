@@ -14,6 +14,7 @@ Mỗi scale có cùng cấu trúc:
 \`\`\`text
 <scale>/
 ├── benchmark_metrics.json
+├── summary.csv
 └── orders_parquet/
     ├── country=MY/
     ├── country=SG/

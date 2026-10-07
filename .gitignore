@@ -9,5 +9,5 @@ __pycache__/
 !data/processed/
 !data/processed/orders_parquet/
 
-# 10M/100M scale runs are generated locally and are intentionally not committed.
-data/scale/
+# Large benchmark outputs are generated locally / as GitHub Actions artifacts.
+output/*/orders_parquet/

@@ -173,8 +173,13 @@ def main():
     clean_path = os.path.join(
         args.output_dir, "processed", f"orders_clean_{name}.csv.gz"
     )
+    summary_filename = (
+        "orders_summary.csv"
+        if n == 1_000_000
+        else f"orders_summary_{name}.csv"
+    )
     summary_path = os.path.join(
-        args.output_dir, "processed", f"orders_summary_{name}.csv"
+        args.output_dir, "processed", summary_filename
     )
 
     os.makedirs(os.path.dirname(raw_path), exist_ok=True)

@@ -45,5 +45,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-${{ inputs.rows }}
-          path: data/scale/\${{ inputs.rows }}/benchmark_metrics.json
+          path: data/scale/${{ inputs.rows }}/benchmark_metrics.json
           if-no-files-found: error

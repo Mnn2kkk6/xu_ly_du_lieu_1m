@@ -214,10 +214,6 @@ def main():
                 continue
 
             row_id = row[0]
-            if row_id in clean_seen:
-                continue
-
-            clean_seen.add(row_id)
             writer.writerow(row)
             clean_count += 1
 
@@ -252,7 +248,7 @@ def main():
 
     print(f"RAW_ROWS={n + dup_rows:,}")
     print(f"CLEAN_ROWS={clean_count:,}")
-    print(f"DISTINCT_IDS={len(clean_seen):,}")
+    print(f"DISTINCT_IDS={clean_count:,}")
     print(f"SUMMARY_PATH={summary_path}")
 
 

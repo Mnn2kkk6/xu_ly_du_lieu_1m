@@ -21,7 +21,7 @@ data/10m/
 Tạo dataset:
 
 ```bash
-python generate_repository_data.py --rows 10m --output-dir data/10m
+python generate_repository_data.py --rows 10m
 ```
 
 Tạo Parquet:

@@ -35,7 +35,7 @@ jobs:
       - name: Run scale benchmark
         run: |
           python bigdata_scale_pyspark.py \
-            --rows "\${{ inputs.rows }}" \
+            --rows "${{ inputs.rows }}" \
             --output-dir data/scale
 
       - name: Show benchmark metrics

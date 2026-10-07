@@ -24,4 +24,4 @@ spark-submit bigdata_scale_pyspark.py --rows 10m --output-dir output
 
 `benchmark_metrics.json` được tạo sau khi pipeline hoàn tất.
 
-Các file Parquet thực tế của scale lớn không được commit vào Git; dùng workflow **Scale Benchmark (1M / 10M / 100M)** để tạo và tải artifact.
+summary.csv và benchmark_metrics.json là output tổng hợp nhỏ; các file Parquet thực tế của scale lớn không được commit vào Git. Dùng workflow **Scale Benchmark (1M / 10M / 100M)** để tạo và tải toàn bộ output artifact.

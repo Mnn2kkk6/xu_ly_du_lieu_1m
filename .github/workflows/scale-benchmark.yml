@@ -34,16 +34,16 @@ jobs:
 
       - name: Run scale benchmark
         run: |
-          python bigdata_scale_pyspark.py \
+          spark-submit bigdata_scale_pyspark.py \
             --rows "${{ inputs.rows }}" \
             --output-dir data/scale
 
       - name: Show benchmark metrics
-        run: cat data/scale/\${{ inputs.rows }}/benchmark_metrics.json
+        run: cat data/scale/${{ inputs.rows }}/benchmark_metrics.json
 
       - name: Upload benchmark metrics
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-\${{ inputs.rows }}
+          name: benchmark-${{ inputs.rows }}
           path: data/scale/\${{ inputs.rows }}/benchmark_metrics.json
           if-no-files-found: error

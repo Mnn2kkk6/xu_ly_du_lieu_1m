@@ -201,7 +201,7 @@ def main():
     output_dir = os.path.join(args.output_dir, name)
     bronze_path = os.path.join(output_dir, "bronze_cdc")
     silver_path = os.path.join(output_dir, "silver_current_orders")
-    gold_path = os.path.join(output_dir, "gold_daily_metrics")
+    gold_path = os.path.join(output_dir, "gold_business_metrics")
     os.makedirs(output_dir, exist_ok=True)
 
     timings = {}

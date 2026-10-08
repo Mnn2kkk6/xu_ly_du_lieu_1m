@@ -263,16 +263,6 @@ def main():
         .count()
     )
 
-    (
-        current_orders
-        .withColumn(
-            "order_month",
-            date_format("event_ts", "yyyy-MM")
-            if "event_ts" in current_orders.columns
-            else lit("unknown")
-        )
-    )
-
     current_orders.write.mode("overwrite").parquet(silver_path)
     timings["silver_cdc_merge_seconds"] = round(
         time.perf_counter() - t0, 2
@@ -282,17 +272,6 @@ def main():
     # 4. Gold: business metrics from the current-state Silver table.
     # --------------------------------------------------------------
     t0 = time.perf_counter()
-    daily_metrics = (
-        current_orders
-        .groupBy("country", date_format("order_id", "yyyy").alias("dummy"))
-        .agg(
-            count("order_id").alias("orders"),
-            spark_sum("quantity").alias("units"),
-            spark_sum("total_amount").alias("revenue"),
-            avg("total_amount").alias("avg_order_value"),
-        )
-    )
-
     # Keep the final gold table simple and stable for all scales.
     gold_metrics = (
         current_orders

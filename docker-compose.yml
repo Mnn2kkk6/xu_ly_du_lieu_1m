@@ -1,0 +1,17 @@
+services:
+  spark:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pyspark-scale-lab
+    working_dir: /app
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYSPARK_PYTHON: python3
+      PYSPARK_DRIVER_PYTHON: python3
+      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    stdin_open: true
+    tty: true

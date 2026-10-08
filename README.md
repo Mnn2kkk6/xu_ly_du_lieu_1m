@@ -351,7 +351,7 @@ output/exercise_03/
 ├── 1m/
 │   ├── bronze_cdc/
 │   ├── silver_current_orders/
-│   ├── gold_daily_metrics/
+│   ├── gold_business_metrics/
 │   └── cdc_metrics.json
 ├── 10m/
 │   └── ...

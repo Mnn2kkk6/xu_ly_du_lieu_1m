@@ -1,11 +1,10 @@
 import argparse
-import csv
 import json
 import os
 import time
 
 from pyspark import StorageLevel
-from pyspark.sql import Window
+from pyspark.sql import SparkSession, Window
 from pyspark.sql.functions import (
     avg,
     broadcast,
@@ -15,9 +14,9 @@ from pyspark.sql.functions import (
     dense_rank,
     expr,
     lit,
-    max as spark_max,
     row_number,
     stddev,
+    round as spark_round,
     sum as spark_sum,
     when,
 )
@@ -111,7 +110,7 @@ def main():
     )
 
     spark = (
-        __import__("pyspark").sql.SparkSession.builder
+        SparkSession.builder
         .appName(f"AdvancedOrderAnalytics-{name}")
         .master("local[*]")
         .config("spark.sql.shuffle.partitions", str(partitions))
@@ -162,7 +161,9 @@ def main():
         )
     )
 
-    customer_metrics = customer_metrics.persist(StorageLevel.MEMORY_ONLY)\n\n    revenue_p50, revenue_p90 = customer_metrics.approxQuantile(
+    customer_metrics = customer_metrics.persist(StorageLevel.MEMORY_ONLY)
+
+    revenue_p50, revenue_p90 = customer_metrics.approxQuantile(
         "lifetime_revenue",
         [0.50, 0.90],
         0.01,
@@ -459,6 +460,7 @@ def main():
     ]:
         print(os.path.join(output_dir, filename))
 
+    customer_metrics.unpersist()
     clean_df.unpersist()
     spark.stop()
 

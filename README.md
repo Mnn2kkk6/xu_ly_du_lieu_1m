@@ -171,3 +171,72 @@ Script cũ vẫn được giữ để không làm mất bài 1M đang có.
 | Disk size | | | |
 
 Điểm cần phân tích không chỉ là thời gian tăng bao nhiêu lần, mà còn phải nhìn vào shuffle, số partition, memory pressure, disk I/O và khả năng mở rộng của pipeline.
+
+
+## 6. Bài 2 — Advanced Order Analytics
+
+Bài 2 sử dụng lại generator 30 fields của bài scale hiện tại nhưng chuyển trọng tâm từ **Data Quality** sang các pattern thường gặp khi làm Data Engineering:
+
+- **Customer 360:** tổng hợp số đơn, doanh thu, giá trị đơn trung bình, thời gian giao hàng và rating theo khách hàng.
+- **Customer segmentation:** chia khách hàng thành STANDARD / CORE / VIP dựa trên P50 và P90 lifetime revenue.
+- **Top-3 products per country:** dùng `dense_rank()` + Window để tìm sản phẩm có doanh thu cao nhất theo từng quốc gia.
+- **7-day rolling revenue:** tính doanh thu và số đơn lũy kế 7 ngày bằng Window.
+- **Warehouse capacity:** aggregate theo warehouse/ngày rồi `broadcast join` với bảng dimension kho nhỏ.
+- **Order anomaly detection:** dùng Window theo customer để tính average/stddev và đánh dấu đơn có giá trị cao bất thường.
+
+### Chạy 3 quy mô
+
+~~~bash
+spark-submit advanced_order_analytics_pyspark.py --rows 1m
+spark-submit advanced_order_analytics_pyspark.py --rows 10m
+spark-submit advanced_order_analytics_pyspark.py --rows 100m
+~~~
+
+Có thể thay đổi số shuffle partitions:
+
+~~~bash
+spark-submit advanced_order_analytics_pyspark.py \
+  --rows 100m \
+  --shuffle-partitions 128
+~~~
+
+Output mặc định:
+
+~~~text
+output/
+└── advanced/
+    ├── 1m/
+    │   ├── advanced_metrics.json
+    │   ├── customer_segment_summary/
+    │   ├── top3_products_by_country/
+    │   ├── rolling_7d_revenue_latest_10_days/
+    │   ├── busiest_warehouse_days/
+    │   └── top_customer_order_anomalies/
+    ├── 10m/
+    │   └── ...
+    └── 100m/
+        └── ...
+~~~
+
+Bài 2 không commit thêm dataset 10M/100M vào Git. Script tái sử dụng `build_dataset()` trong `bigdata_scale_pyspark.py`, vì vậy cả ba scale được tạo và xử lý bằng cùng một pipeline.
+
+### Mục tiêu thực hành
+
+Sau khi làm xong cả hai bài, có thể đối chiếu:
+
+| Kỹ thuật | Bài 1 | Bài 2 |
+|---|:---:|:---:|
+| Schema / casting | ✓ | ✓ |
+| NULL / invalid values | ✓ | ✓ |
+| Deduplication | ✓ | ✓ |
+| GroupBy / aggregation | ✓ | ✓ |
+| Parquet / partition | ✓ |  |
+| Execution plan | ✓ |  |
+| Window function |  | ✓ |
+| Rolling metrics |  | ✓ |
+| Ranking / Top-N |  | ✓ |
+| Broadcast join |  | ✓ |
+| Anomaly detection |  | ✓ |
+| Scale 1M → 10M → 100M | ✓ | ✓ |
+
+Điểm đáng phân tích ở Bài 2 là **shuffle**, **sort trong Window**, tác động của **broadcast join**, memory pressure và việc thời gian xử lý thay đổi thế nào khi từ 1M → 10M → 100M.

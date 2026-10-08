@@ -162,7 +162,7 @@ def main():
         )
     )
 
-    revenue_p50, revenue_p90 = customer_metrics.approxQuantile(
+    customer_metrics = customer_metrics.persist(StorageLevel.MEMORY_ONLY)\n\n    revenue_p50, revenue_p90 = customer_metrics.approxQuantile(
         "lifetime_revenue",
         [0.50, 0.90],
         0.01,

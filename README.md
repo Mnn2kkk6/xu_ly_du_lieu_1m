@@ -240,3 +240,71 @@ Sau khi làm xong cả hai bài, có thể đối chiếu:
 | Scale 1M → 10M → 100M | ✓ | ✓ |
 
 Điểm đáng phân tích ở Bài 2 là **shuffle**, **sort trong Window**, tác động của **broadcast join**, memory pressure và việc thời gian xử lý thay đổi thế nào khi từ 1M → 10M → 100M.
+
+
+## 7. Docker
+
+Repository có Docker để tạo môi trường PySpark reproducible, không cần cài Spark trực tiếp trên máy.
+
+### Build image
+
+~~~bash
+docker compose build
+~~~
+
+### Chạy bài Data Quality
+
+~~~bash
+docker compose run --rm spark \
+  spark-submit /app/bigdata_scale_pyspark.py --rows 1m
+
+docker compose run --rm spark \
+  spark-submit /app/bigdata_scale_pyspark.py --rows 10m
+
+docker compose run --rm spark \
+  spark-submit /app/bigdata_scale_pyspark.py --rows 100m
+~~~
+
+### Chạy bài Advanced Analytics
+
+~~~bash
+docker compose run --rm spark \
+  spark-submit /app/advanced_order_analytics_pyspark.py --rows 1m
+
+docker compose run --rm spark \
+  spark-submit /app/advanced_order_analytics_pyspark.py --rows 10m
+
+docker compose run --rm spark \
+  spark-submit /app/advanced_order_analytics_pyspark.py --rows 100m
+~~~
+
+Có thể override số shuffle partitions:
+
+~~~bash
+docker compose run --rm spark \
+  spark-submit /app/advanced_order_analytics_pyspark.py \
+  --rows 100m \
+  --shuffle-partitions 128
+~~~
+
+### Volume
+
+Docker Compose mount:
+
+~~~text
+./data   → /app/data
+./output → /app/output
+~~~
+
+Dataset và output không được đóng gói vào Docker image. Điều này tránh làm image phình to khi chạy với dataset 10M/100M.
+
+### Kiểm tra môi trường
+
+~~~bash
+docker compose run --rm spark \
+  python -c "import pyspark; print(pyspark.__version__)"
+
+docker compose run --rm spark \
+  java -version
+~~~
+

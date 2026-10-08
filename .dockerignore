@@ -1,0 +1,28 @@
+# Git
+.git
+.gitignore
+.github
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local environments
+.venv/
+venv/
+env/
+
+# Generated output
+output/
+
+# Generated large datasets
+data/10m/
+data/100m/
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

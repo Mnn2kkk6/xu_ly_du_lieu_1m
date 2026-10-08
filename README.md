@@ -308,3 +308,76 @@ docker compose run --rm spark \
   java -version
 ~~~
 
+
+
+## 8. Bài 3 — Incremental ETL & CDC
+
+Bài 3 mô phỏng một pipeline e-commerce nhận thay đổi đơn hàng dưới dạng **CDC events** thay vì xử lý lại toàn bộ dữ liệu.
+
+Các phần chính:
+
+- **Bronze:** sinh và lưu INSERT / UPDATE / DELETE events dưới dạng Parquet partition theo event date.
+- **Silver:** dùng Window để lấy latest event cho từng `order_id`, sau đó loại các order có latest operation là DELETE.
+- **Gold:** aggregate current-state orders theo country và product category cho BI/reporting.
+- **Watermark:** ghi nhận `max(event_ts)` của batch đã xử lý.
+- **Idempotency:** kiểm tra kết quả khi cùng một CDC feed được xử lý lại.
+
+### Chạy bằng Docker
+
+~~~bash
+docker compose run --rm spark \
+  spark-submit /app/incremental_etl_cdc_pyspark.py --rows 1m
+
+docker compose run --rm spark \
+  spark-submit /app/incremental_etl_cdc_pyspark.py --rows 10m
+
+docker compose run --rm spark \
+  spark-submit /app/incremental_etl_cdc_pyspark.py --rows 100m
+~~~
+
+Có thể benchmark nhiều mức shuffle partitions:
+
+~~~bash
+docker compose run --rm spark \
+  spark-submit /app/incremental_etl_cdc_pyspark.py \
+  --rows 100m \
+  --shuffle-partitions 64
+~~~
+
+### Output
+
+~~~text
+output/exercise_03/
+├── 1m/
+│   ├── bronze_cdc/
+│   ├── silver_current_orders/
+│   ├── gold_daily_metrics/
+│   └── cdc_metrics.json
+├── 10m/
+│   └── ...
+└── 100m/
+    └── ...
+~~~
+
+### Kỹ thuật được bổ sung
+
+| Kỹ thuật | Bài 1 | Bài 2 | Bài 3 |
+|---|:---:|:---:|:---:|
+| Data quality / casting | ✓ | ✓ | ✓ |
+| Deduplication | ✓ | ✓ | ✓ |
+| GroupBy / aggregation | ✓ | ✓ | ✓ |
+| Parquet / partitioning | ✓ |  | ✓ |
+| Window function |  | ✓ | ✓ |
+| Rolling metrics |  | ✓ |  |
+| Ranking / Top-N |  | ✓ |  |
+| Broadcast join |  | ✓ |  |
+| Anomaly detection |  | ✓ |  |
+| CDC |  |  | ✓ |
+| Incremental ETL |  |  | ✓ |
+| Bronze / Silver / Gold |  |  | ✓ |
+| Watermark |  |  | ✓ |
+| Idempotency |  |  | ✓ |
+| Scale 1M → 10M → 100M | ✓ | ✓ | ✓ |
+| Docker | ✓ | ✓ | ✓ |
+
+Bài 3 giúp repo tiến gần hơn tới một mini data platform workflow thay vì chỉ là các phép xử lý DataFrame độc lập.

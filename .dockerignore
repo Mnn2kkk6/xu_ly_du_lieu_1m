@@ -17,9 +17,8 @@ env/
 # Generated output
 output/
 
-# Generated large datasets
-data/10m/
-data/100m/
+# Datasets are mounted from the host; do not copy them into the image
+data/
 
 # Editor / OS files
 .vscode/
